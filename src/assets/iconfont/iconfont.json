@@ -1,0 +1,30 @@
+{
+  "id": "2368723",
+  "name": "no name",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "19874844",
+      "name": "cloudDrive",
+      "font_class": "cloudDrive",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "19874842",
+      "name": "bin",
+      "font_class": "bin",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "19874843",
+      "name": "star",
+      "font_class": "star",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    }
+  ]
+}

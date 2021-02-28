@@ -1,0 +1,27 @@
+a {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+    color: #606266;
+}
+
+a:link{
+    text-decoration: none;
+    color: #606266;
+}
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #dadce0;
+}
+.icon{
+    width: 2em;
+    height: 2em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: hidden;
+}

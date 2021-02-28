@@ -1,0 +1,196 @@
+<template>
+  <div style="height: calc(100vh - 118px);display: flex">
+    <el-table ref="multipleTable"
+              :data="tableData"
+              tooltip-effect="dark"
+              @selection-change="handleSelectionChange"
+              border
+              v-loading="loading"
+              height="calc(100vh - 118px)">
+      <el-table-column
+          type="selection"
+      >
+      </el-table-column>
+      <el-table-column
+          sortable
+          prop="nameFormat"
+          label="名称"
+          show-overflow-tooltip>
+        <template slot-scope="scope">
+          <div slot="reference" class="name-wrapper ">
+            <el-image
+                style="width: 30px; height: 30px"
+                :src="url"
+                :preview-src-list="srcList">
+            </el-image>
+            {{ scope.row.name }}
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column
+          prop="uploader"
+          label="上传者"
+      >
+      </el-table-column>
+      <el-table-column
+          prop="date"
+          label="日期"
+          sortable
+      >
+      </el-table-column>
+    </el-table>
+    <div class="button-bar">
+      <el-upload
+          multiple
+          class="upload-demo"
+          :file-list="fileList"
+          :auto-upload="false"
+          :show-file-list="show"
+          :on-change="handleChange"
+          :on-remove="handleRemove"
+          :on-preview="handlePreview"
+          :before-remove="beforeRemove"
+          :on-exceed="handleExceed"
+          action="#">
+        <el-button size="small" type="primary" slot="trigger">选择文件</el-button>
+      </el-upload>
+      <el-button type="success" @click="upload">点击上传</el-button>
+      <el-button @click="handleDownload" type="primary">下载</el-button>
+      <el-button type="danger" @click="handleDelete">删除</el-button>
+      <el-button @click="toggleSelection()">取消选择</el-button>
+    </div>
+  </div>
+</template>
+
+<script>
+import axios from "axios"
+
+Date.prototype.format = function (fmt) {
+  let o = {
+    "M+": this.getMonth() + 1,                 //月份
+    "d+": this.getDate(),                    //日
+    "h+": this.getHours(),                   //小时
+    "m+": this.getMinutes(),                 //分
+    "s+": this.getSeconds(),                 //秒
+    "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+    "S": this.getMilliseconds()             //毫秒
+  };
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+  }
+  for (var k in o) {
+    if (new RegExp("(" + k + ")").test(fmt)) {
+      fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    }
+  }
+  return fmt;
+}
+
+export default {
+  data() {
+    return {
+      tableData: [],
+      multipleSelection: [],
+      fileList: [],
+      loading: false,
+      url: 'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg',
+      srcList: [
+        'https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg',
+        'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'
+      ]
+    }
+  },
+  computed: {
+    show() {
+      return this.fileList.length > 0
+    }
+  },
+  created() {
+    axios.get('http://localhost:9999/get').then(this.getFiles)
+  },
+  methods: {
+    handleChange(file, fileList) {
+      this.fileList = fileList
+    },
+    getFiles(result) {
+      this.tableData = []
+      this.loading = true
+      result = Array.from(JSON.parse(result.data.fileList))
+      result.forEach(v => {
+        this.tableData.push({
+          date: new Date(v.date).format('yyyy-MM-dd hh:mm:ss'),
+          uploader: v.uploader,
+          name: v.filename,
+          nameFormat: (v.filename).toLowerCase(),
+          path: v.path,
+          what: v.type || 'folder'
+        })
+      })
+      this.loading = false
+    },
+    upload() {
+      let fl = new FormData()
+      this.fileList.forEach(v => {
+        fl.append('files', v.raw)
+      })
+      axios.post('http://localhost:9999/post', fl).then(this.getFiles)
+    },
+    toggleSelection(rows) {
+      if (rows) {
+        rows.forEach(row => {
+          this.$refs.multipleTable.toggleRowSelection(row);
+        });
+      } else {
+        this.$refs.multipleTable.clearSelection();
+      }
+    },
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    handleRemove() {
+      console.log('he')
+    },
+    handlePreview() {
+    },
+    beforeRemove() {
+    },
+    handleExceed(files, fileList) {
+      console.log(files, fileList)
+    },
+    handleDownload() {
+    },
+    handleDelete() {
+    }
+  }
+}
+</script>
+
+<style>
+
+.el-table {
+  margin-top: 20px;
+  width: calc(100% - 100px);
+}
+
+td, th {
+  border-right: none !important;
+}
+
+td div {
+  vertical-align: middle;
+}
+
+.el-upload-list {
+  position: fixed;
+  z-index: 2;
+  bottom: 50px;
+  left: 0;
+  border-top: 20px solid #2c3e50;
+  background-color: #fff;
+  max-height: 200px;
+  overflow-y: scroll;
+  padding: 20px 0;
+}
+
+
+</style>
