@@ -7,22 +7,22 @@
         class="capacity"
       />
       <!--<el-menu>
-        <el-submenu index="/star">
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/star',params:{}}" slot="title">
+        <el-submenu admin="/star">
+          <router-link :to="{path:'/user/star',params:{}}" slot="title">
             <i class="iconfont icon iconstar"></i>
             <span>收藏</span>
           </router-link>
         </el-submenu>
-        <el-submenu index="/disk">
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/disk'}" slot="title">
+        <el-submenu admin="/disk">
+          <router-link :to="{path:'/user/disk'}" slot="title">
             <i class="iconfont icon iconcloudDrive"></i>
             <span>我的网盘</span>
           </router-link>
-       <el-submenu v-for="folder in folders" :index="'/'+folder.name">
+       <el-submenu v-for="folder in folders" :admin="'/'+folder.name">
             <template slot="title">
               <span>{{ folder.name }}</span>
             </template>
-            <el-submenu :index="'/'+folder.name+'/'+sub_folder.name"
+            <el-submenu :admin="'/'+folder.name+'/'+sub_folder.name"
                         v-for="sub_folder in folder.sub_folders">
               <template slot="title">
                 <span>{{ sub_folder.name }}</span>
@@ -32,8 +32,8 @@
           目录结构
 
         </el-submenu>
-        <el-submenu index="/bin">
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/bin'}" slot="title">
+        <el-submenu admin="/bin">
+          <router-link :to="{path:'/user/bin'}" slot="title">
             <i class="iconfont icon iconbin"></i>
             <span>回收站</span>
           </router-link>
@@ -41,19 +41,19 @@
       </el-menu>-->
       <el-menu>
         <el-menu-item>
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/star',params:{}}">
+          <router-link :to="{path:'/user/star'}">
             <i class="iconfont icon iconstar" />
             <span>收藏</span>
           </router-link>
         </el-menu-item>
         <el-menu-item>
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/disk'}">
+          <router-link :to="{path:'/user/disk'}">
             <i class="iconfont icon iconcloudDrive" />
             <span>我的网盘</span>
           </router-link>
         </el-menu-item>
         <el-menu-item>
-          <router-link :to="{path:'/user/'+$store.state.me.username+'/bin'}">
+          <router-link :to="{path:'/user/bin'}">
             <i class="iconfont icon iconbin" />
             <span>回收站</span>
           </router-link>

@@ -1,25 +1,17 @@
 import Vue from 'vue'
-import Vuex from "vuex";
-import App from './App.vue'
-import router from '@/router'
 import store from '@/store'
+import router from '@/router'
+import App from '@/pages/admin/App'
 import Element from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css';
-import '../public/css/diskIcon/iconfont.js'
-import './public'
+import 'element-ui/lib/theme-chalk/index.css'
 
-Vue.use(Vuex)
+require('../../public')
 Vue.use(Element, {size: 'small', zIndex: 3000})
 Vue.config.productionTip = false
-
-new Vue({
-    router,
-    store,
-    render: h => h(App)
-}).$mount('#app')
-
-document.onselectstart = () => {
-    return false
+Vue.config.errorHandler = (err, vm) => {
+    console.log('抛出异常')
+    console.log(vm)
+    console.log(err)
 }
 Date.prototype.format = function (fmt) {
     let o = {
@@ -41,6 +33,10 @@ Date.prototype.format = function (fmt) {
     }
     return fmt;
 }
-window.oncontextmenu = function () {
-    return false
-}
+
+Vue.prototype.$throw = (err) => Vue.config.errorHandler(err, this)
+new Vue({
+    router,
+    store,
+    render: h => h(App)
+}).$mount('#app')

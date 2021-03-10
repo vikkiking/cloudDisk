@@ -1,62 +1,63 @@
 <template>
   <el-form
-    :model="ruleForm"
-    status-icon
-    :rules="rules"
-    ref="ruleForm"
-    label-width="6em"
-    class="demo-ruleForm"
-    size="medium"
+      :model="ruleForm"
+      status-icon
+      :rules="rules"
+      ref="ruleForm"
+      label-width="6em"
+      class="demo-ruleForm"
+      size="medium"
   >
     <el-form-item
-      label="邮箱"
-      prop="mail"
+        label="邮箱"
+        prop="mail"
     >
-      <el-input v-model="ruleForm.mail" />
+      <el-input v-model="ruleForm.mail"/>
     </el-form-item>
     <el-form-item
-      label="密码"
-      prop="pass"
+        label="密码"
+        prop="pass"
     >
       <el-input
-        type="password"
-        v-model="ruleForm.pass"
-        autocomplete="off"
-        :show-password="true"
+          type="password"
+          v-model="ruleForm.pass"
+          autocomplete="off"
+          :show-password="true"
       />
     </el-form-item>
     <el-form-item
-      label="确认密码"
-      prop="checkPass"
+        label="确认密码"
+        prop="checkPass"
     >
       <el-input
-        type="password"
-        v-model="ruleForm.checkPass"
-        autocomplete="off"
-        :show-password="true"
+          type="password"
+          v-model="ruleForm.checkPass"
+          autocomplete="off"
+          :show-password="true"
       />
     </el-form-item>
     <el-form-item
-      label="验证码"
-      prop="validCode"
+        label="验证码"
+        prop="authCode"
     >
       <el-input
-        v-model.number="ruleForm.validCode"
-        type="text"
-        max-length="6"
-        :style="'width:7em'"
-      />
+          v-model.number="ruleForm.authCode"
+          type="text"
+          max-length="6"
+          :style="'width:7em;float:left'"/>
       <el-button
-        @click="sendCode"
-        style="position: absolute;right: 20px"
+          id="send_changePass"
+          @click="sendCode"
+          :loading="loading"
+          style="position: absolute;right: 20px;"
       >
         发送
       </el-button>
     </el-form-item>
     <el-form-item>
       <el-button
-        type="primary"
-        @click="submitForm('ruleForm')"
+          type="primary"
+          @click="submitForm('ruleForm')"
       >
         提交
       </el-button>
@@ -66,6 +67,7 @@
 
 <script>
 import axios from "axios";
+
 const login = require('../public')
 
 export default {
@@ -92,19 +94,29 @@ export default {
         mail: '',
         pass: '',
         checkPass: '',
-        validCode: ''
+        authCode: ''
       },
       rules: {
         mail: [{required: true, message: '邮箱不能为空'}],
         pass: [{required: true, validator: validatePass, trigger: 'blur'}],
         checkPass: [{required: true, validator: validatePass2, trigger: 'blur'}],
-        validCode: [{required: true, validator: login.checkCode, trigger: 'blur'}]
-      }
+        authCode: [{required: true, validator: login.checkCode, trigger: 'blur'}]
+      },
+      loading: false
     }
   },
   methods: {
-    sendCode(){
-
+    sendCode() {
+      let button = document.querySelector('#send_changePass')
+      button.innerText = '发送'
+      button.disabled = true
+      this.loading = true
+      axios.post(this.$store.state.api.getCode, login.json2Fd({email: this.ruleForm.mail})).then(res => {
+        this.loading = false
+        if (res.data.message === 'success') {
+          login.countDOwn(button)
+        }
+      })
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

@@ -68,47 +68,50 @@
     <!--上传列表，进度-->
     <div class="file-list">
       <div
+          @click="drawer=!drawer"
+          class="panel"
+      >
+        <!--<i class="el-icon-circle-close"></i>-->
+        <i :class="{'el-icon-arrow-up':drawer,'el-icon-arrow-down':!drawer}" />
+      </div>
+      <div
         v-show="drawer"
-        style="display: inline-flex"
       >
         <el-upload
-          :style="'height:100%'"
           multiple
           ref="upload"
+          accept="image/*"
           class="upload-demo"
           :file-list="fileList"
-          :auto-upload="false"
+          :auto-upload="true"
           :show-file-list="true"
           :on-change="handleChange"
           :on-remove="handleRemove"
           :on-preview="handlePreview"
           :before-remove="beforeRemove"
           :on-exceed="handleExceed"
-          action="#"
+          :data="{path:this.$route.path+'/'}"
+          :action="this.$store.state.api.post"
         >
           <!-- :data="{path:this.$route.path+'/',file:fileList}"
           :action="this.$store.state.api.post"-->
-          <el-button
-            type="primary"
-            slot="trigger"
-          >
-            选取文件
-          </el-button>
-          <el-button
-            type="success"
-            @click="submitUpload"
-          >
-            确认上传
-          </el-button>
+          <div style="display: inline-flex">
+            <el-button
+                type="primary"
+                slot="trigger"
+            >
+              选取文件
+            </el-button>
+            <!--<el-button
+                type="success"
+                @click="submitUpload"
+            >
+              确认上传
+            </el-button>-->
+          </div>
+
         </el-upload>
         <!--<el-list :files="fileList"></el-list>-->
-      </div>
-      <div
-        @click="drawer=!drawer"
-        class="panel"
-      >
-        <!--<i class="el-icon-circle-close"></i>-->
-        <i :class="{'el-icon-arrow-left':drawer,'el-icon-arrow-right':!drawer}" />
       </div>
     </div>
     <el-table
@@ -249,7 +252,6 @@ export default {
             path: route.path,
           }
         }).then(this.getFiles)
-
       },
       immediate: true
     },
@@ -374,7 +376,7 @@ export default {
         fl.append('path', this.$route.path + '/')
         axios.post(this.$store.state.api.post, fl, {
               onUploadProgress: progressEvent => {
-                this.progress = Number.parseInt((progressEvent.login / progressEvent.total) * 100)
+               // this.progress = Number.parseInt((progressEvent.login / progressEvent.total) * 100)
                 this.loaded = progressEvent.loaded
                 this.total = progressEvent.total
               },
@@ -550,7 +552,8 @@ td div {
   position: fixed;
   max-height: 300px;
   min-height: 100px;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel {
@@ -559,7 +562,7 @@ td div {
   text-align: center;
   font-size: 1.5em;
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .el-table {

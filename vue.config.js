@@ -9,6 +9,11 @@ module.exports = {
       entry: 'src/main.js',
       template: 'public/index.html',
       filename: 'index.html'
+    },
+    admin:{
+      entry:'src/pages/admin/main.js',
+      template:'public/index.html',
+      filename:'admin.html'
     }
   },
   lintOnSave: false,

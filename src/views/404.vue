@@ -1,4 +1,7 @@
-<template />
+<template/>
+<div>
+404啦
+</div>
 
 <script>
 export default {

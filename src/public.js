@@ -1,30 +1,51 @@
 import axios from "axios";
-import Store from '../src/store/index'
+import store from '../src/store'
 
-window.oncontextmenu = function () {
+let result
+/*window.oncontextmenu = function () {
     return false
-}
+}*/
+//axios.defaults.headers.common['Authorization'] = localStorage.getItem('Authorization')
+axios.defaults.baseURL = 'http://120.25.105.43:8080/CloudDisk-1.0-SNAPSHOT'
 axios.defaults.withCredentials = true
-
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
-
 axios.interceptors.request.use(
     config => {
-        if (localStorage.getItem('Authorization'))
-            config.headers.Authorization = localStorage.getItem('Authorization')
-        // console.log(config)
+        if (store.state.me.Authorization)
+            config.headers.Authorization = store.state.me.Authorization
         return config
     },
     error => {
+        Promise.reject = (e => {
+            alert(e.response.status)
+        })
         return Promise.reject(error)
     }
 )
-axios.interceptors.response.use(function (response) {
-    return response
-}, function (error) {
-    return Promise.reject(error)
-})
-
+axios.interceptors.response.use(
+    response => {
+        return response
+    },
+    error => {
+        if (error.response) {
+            switch (error.response.status) {
+                case 401:
+                    localStorage.clear()
+                    if (confirm('登录超时，请重新登录'))
+                        window.location.href = '/login'
+                    break
+                case 500:
+                    alert('服务器内部错误')
+                    break
+                case 304:
+                    alert('请手动清除浏览器缓存')
+                    break
+                default:
+                    alert('出现错误！')
+            }
+        }
+        return Promise.reject(error.response.data)
+    }
+)
 let checkMail = (rule, value, callback) => {
     if (!value) return callback(new Error('邮箱不能为空'))
     setTimeout(() => {
@@ -43,27 +64,34 @@ let checkPasswd = (rule, value, callback) => {
 }
 let checkName = (rule, value, callback) => {
     if (!value) return callback(new Error('昵称不能为空'))
-    setTimeout(() => {
-        if (/[a-zA-Z0-9_]{6,}/.test(value)) {
-            axios.get(Store.state.api.checkName, {nickname: value}).then(res => {
-                if (res.data.message)
-                    callback()
-                else callback(new Error('昵称已被占用'))
-            })
-        } else callback(new Error('昵称至少为6位字母、数字、下划线'))
-    }, 200)
+    if (/[a-zA-Z0-9_]{6,}/.test(value)) return callback()
+    else return callback(new Error('昵称至少为6位字母、数字、下划线'))
 }
 let checkCode = (rule, value, callback) => {
     if (!value) return callback(new Error('请输入验证码'))
-    setTimeout(() => {
-        axios.post(this.$store.state.api.validCode, {mail: this.ruleForm.mail})
-            .then(res => {
-                if (res.data.message === 'success')
-                    callback()
-                else callback(new Error('验证码错误'))
-            })
-    }, 100)
+    else return callback()
+}
+let countDOwn = (button) => {
+    let time = 120
+    let countDown = setInterval(() => {
+        if (time > 0) {
+            time--
+            button.innerText = time + '秒'
+        } else {
+            button.innerText = '发送'
+            button.disabled = false
+            result = ''
+            clearInterval(countDown)
+        }
+    }, 1000)
+}
+let json2Fd = (form) => {
+    let fd = new FormData()
+    for (let k in form) {
+        fd.append(k, form[k])
+    }
+    return fd
 }
 export {
-    checkMail, checkPasswd, checkName,checkCode
+    checkMail, checkPasswd, checkName, checkCode, countDOwn, json2Fd
 }

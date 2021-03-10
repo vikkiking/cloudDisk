@@ -2,86 +2,74 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import MainContainer from '@/components/MainContainer'
 import Lost from '@/components/lost'
-import Missing from '@/components/Missing'
-import axios from "axios";
-import "../mock"
+import store from '@/store'
 
 Vue.use(VueRouter)
 
 const routes = [
-     {
-         path: '/user/:username',
-         meta: {
-             requireAuth: true
-         },
-         component: MainContainer,
-     },
     {
-        path: '/user/:username/star*',
-        meta: {
-            requireAuth: true
-        },
-        component: Lost
+        path: '/user/star',
+        meta: {requiresAuth: true},
+        component: Lost,
+        children: [
+            {
+                path: '*',
+                component: Lost
+            }
+        ]
     },
     {
         name: 'disk',
-        path: '/user/:username/disk*',
-        meta: {
-            requireAuth: true
-        },
-        component: MainContainer
+        path: '/user/disk',
+        meta: {requiresAuth: true},
+        component: MainContainer,
+        children: [
+            {
+                path: '*',
+                component: MainContainer
+            }
+        ]
     },
     {
-        path: '/user/:username/bin*',
-        meta: {
-            requireAuth: true
-        },
-        component: Lost
+        path: '/user/bin',
+        meta: {requiresAuth: true},
+        component: Lost,
+        children: [
+            {
+                path: '*',
+                component: Lost
+            }
+        ]
     }, {
+        path: '/',
+        redirect: '/user/disk'
+    },
+    {
         path: '*',
-        component: Missing
+        component: () => import('../views/404')
     }
 ]
-
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
 })
+
+function go(path) {
+    window.location.href = path.path
+}
+
 router.beforeEach((to, from, next) => {
-    if (to.matched.some(record => record.meta.requireAuth)) {
-        console.log('hh')
-        axios.get('/auth'
-            , {
-                params: {
-                    token: localStorage.getItem('Authorization'),
-                    mail: localStorage.getItem('mail')
-                }
-            }).then(res => {
-            if (res.data.message==='success') next()
-            else window.location.href = '/login.html'
-            next()
-        }).catch(e => {
-            console.log(e)
-        })
+    if (to.path === '/admin' || to.path === '/admin.html') {
+        next()
     } else {
-        if (to.path !== '/') {
-            try {
+        if (to.matched.some(record => record.meta.requiresAuth)) {
+            if (store.state.me.Authorization !== '') {
                 next()
-            } catch (e) {
-                console.log(e)
-            }
-        } else {
-            let user = localStorage.getItem('username')
-            if (user)
-                next('/user/' + user + '/disk')
-            else next('/login.html')
-        }
+            } else
+                go({path: '/login'})
+        } else next()
     }
 })
-/*const originalPush = VueRouter.prototype.push
 
-VueRouter.prototype.push = function push(location) {
-    return originalPush.call(this, location).catch(err => err)
-}*/
 export default router

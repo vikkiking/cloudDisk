@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <top-bar />
+    <top-bar/>
     <el-container>
       <el-aside
-        width="256px"
-        style="height: 100%"
+          width="256px"
+          style="height: 100%"
       >
-        <side-bar />
+        <side-bar/>
       </el-aside>
       <el-main>
-        <router-view />
+        <router-view/>
       </el-main>
     </el-container>
   </div>
@@ -20,6 +20,7 @@ import TopBar from '@/components/TopBar'
 import SideBar from '@/components/SideBar'
 import MainContainer from '@/components/MainContainer'
 
+
 export default {
   components: {MainContainer, SideBar, TopBar},
 }
@@ -29,6 +30,7 @@ export default {
 <style>
 @import "../public/css/public.css";
 @import "../public/css/diskIcon/iconfont.css";
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -42,7 +44,7 @@ body {
   margin: 0;
 }
 
-.el-main{
+.el-main {
   padding-bottom: 0 !important;
 }
 </style>
