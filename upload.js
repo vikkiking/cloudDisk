@@ -9,7 +9,7 @@ spinner.start();
 
 client.scp('./dist/', {    // 本地打包文件的位置
     "host": '120.25.105.43', // 服务器的IP地址
-    "port": '22',            //     服务器端口， 一般为 22
+    "port": '22',            // 服务器端口， 一般为 22
     "username": 'root',       // 用户名
     "password": '@c20210310',     // 密码
     "path": '/www/wwwroot/cloudDisk'            // 项目部署的服务器目标位置
